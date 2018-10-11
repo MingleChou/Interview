@@ -422,6 +422,12 @@ void quickSort(int[] array, int low, int high){
 
 + AOP：是面向切面的编程，动态封装一些可重用（与业务无关）的代码。比如说你每做一次对数据库操作，都要生成一句日志。如果，你对数据库的操作有很多类，那你每一类中都要写关于日志的方法。但是如果你用aop，那么你可以写一个方法，在这个方法中有关于数据库操作的方法，每一次调用这个方法的时候，就加上生成日志的操作。
 
+原理：通过动态代理的方式为程序添加统一功能，集中解决一些公共问题。
+
+优点：1.各个步骤之间的良好隔离性耦合性大大降低；2.源代码无关性，再扩展功能的同时不对源码进行修改操作 
+
+应用场景：Authentication 权限、Caching 缓存、Context passing 内容传递、Error handling 错误处理、Lazy loading懒加载、Debugging调试、logging, tracing, profiling and monitoring 记录跟踪优化校准、Performance optimization　性能优化、Persistence 持久化、Resource pooling　资源池、Synchronization　同步、Transactions 事务
+
 + IOC：是控制翻转或是依赖注入。通俗的讲就是如果在什么地方需要一个对象，你自己不用去通过new 生成你需要的对象，而是通过spring的bean工厂为你长生这样一个对象。
 
 + DI：依赖注入，是IOC的一种重要实现。比如对象A需要操作数据库，以前我们总是要在A中自己编写代码来获得一个Connection对象，有了 spring我们就只需要告诉spring，A中需要一个Connection，至于这个Connection怎么构造，何时构造，A不需要知道。在系统运行时，spring会在适当的时候制造一个Connection，然后像打针一样，注射到A当中，这样就完成了对各个对象之间关系的控制。A需要依赖 Connection才能正常运行，而这个Connection是由spring注入到A中的，依赖注入的名字就这么来的。
