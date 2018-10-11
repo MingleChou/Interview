@@ -428,24 +428,62 @@ void quickSort(int[] array, int low, int high){
 
 ### AOP的配置方法
 
+### 什么是Spring？
+
+它是一个一站式（full-stack全栈式）框架，提供了从表现层（SpringMVC）到业务层（Spring）再到持久层（Springdata）的一套完整的解决方案。我们在项目中可以只使用Spring一个框架，它就可以提供表现层的mvc框架，持久层的Dao框架。它的两大核心IoC和AOP更是为我们程序解耦和代码简洁易维护提供了支持。
+
+### Spring优点
+1.降低了组件之间的耦合性 ，实现了软件各层之间的解耦
+2.可以使用容易提供的众多服务，如事务管理，消息服务等 
+3.容器提供单例模式支持 
+4.容器提供了AOP技术，利用它很容易实现如权限拦截，运行期监控等功能 
+5.容器提供了众多的辅助类，能加快应用的开发 
+6.spring对于主流的应用框架提供了集成支持，如hibernate，JPA，Struts等 
+7.spring属于低侵入式设计，代码的污染极低 
+8.独立于各种应用服务器 
+9.spring的DI机制降低了业务对象替换的复杂性 
+10.Spring的高度开放性，并不强制应用完全依赖于Spring，开发者可以自由选择spring 的部分或全部 
+
+### 什么是SpringMVC？
+
+Spring MVC是一个基于MVC架构的用来简化web应用程序开发的应用开发框架，它是Spring的一个模块,无需中间整合层来整合，它和Struts2一样都属于表现层的框架。在web模型中，MVC是一种很流行的框架，通过把Model，View，Controller分离，把较为复杂的web应用分成逻辑清晰的几部分，简化开发，减少出错，方便组内开发人员之间的配合。
+
+### SpringMVC优点
+
+1、它是基于组件技术的.全部的应用对象,无论控制器和视图,还是业务对象之类的都是java组件.并且和Spring提供的其他基础结构紧密集成.
+2、不依赖于Servlet API(目标虽是如此,但是在实现的时候确实是依赖于Servlet的)
+3、可以任意使用各种视图技术,而不仅仅局限于JSP
+4、支持各种请求资源的映射策略
+5、它应是易于扩展的
+
 ### SpringMVC的流程
 
-1、用户发送请求至前端控制器DispatcherServlet；
+（1）用户发送请求至前端控制器DispatcherServlet；
 
-2、DispatcherServlet收到请求调用HandlerMapping处理器映射器；
+（2） DispatcherServlet收到请求后，调用HandlerMapping处理器映射器，请求获取Handle；
 
-3、处理器映射器根据请求url找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet；
+（3）处理器映射器根据请求url找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet；
 
-4、DispatcherServlet通过HandlerAdapter处理器适配器调用处理器，执行处理器(Controller，也叫后端控制器)；
+（4）DispatcherServlet通过HandlerAdapter处理器适配器调用处理器；
 
-5、Controller执行完成返回ModelAndView，并返回给HandlerAdapter，HandlerAdapter将结果返回给DispatcherServlet；
+（5）执行处理器(Handler，也叫后端控制器)；
 
-6、DispatcherServlet将ModelAndView传给ViewReslover视图解析器，ViewReslover解析后返回具体View给DispatcherServlet；
+（6）Handler执行完成返回ModelAndView；
 
-7、DispatcherServlet对View进行渲染视图（即将模型数据填充至视图中）后返回给给客户
+（7）HandlerAdapter将Handler执行结果ModelAndView返回给DispatcherServlet；
 
+（8）DispatcherServlet将ModelAndView传给ViewReslover视图解析器进行解析；
+
+（9）ViewReslover解析后返回具体View；
+
+（10）DispatcherServlet对View进行渲染视图（即将模型数据填充至视图中）；
+
+（11）DispatcherServlet响应用户。
+
+![blockchain1](https://img-blog.csdn.net/20180708224853769?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3NDUyMzM3MDA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70 "SpringMVC流程图")
 
 ### 比较一下JDBC、Hibernet、Mybatis
+
 #### JDBC
 JDBC是一种执行SQL的Java API，是用Java语言编写的类和接口组成的，为多种关系型数据库提供了统一的访问接口。
 
@@ -453,6 +491,7 @@ JDBC是一种执行SQL的Java API，是用Java语言编写的类和接口组成�
 ①开发工作量大，需要先连接，然后处理JDBC底层事务，还需要操作Connection对象、Statement/PreparedStatement对象，ResultSet对象拿到数据，再关闭这些资源
 
 ②使用时连接、不使用就关闭，这样频繁的操作数据库，会浪费资源，降低数据库性能。
+
 #### Hibernet
 Hibernet是对JDBC的封装，是一个自动化的ORM框架（对象关系模型）它是POJO通过XML或注解的方式与数据库表映射，是全表映射的模型
 
@@ -471,6 +510,7 @@ Hibernet是对JDBC的封装，是一个自动化的ORM框架（对象关系模�
 ③自带的HQL语言性能不高，当我们查询的数据量很大时，必然需要优化SQL，而Hibernet无法做到
 
 ④学习门槛高，不容易掌握
+
 #### Mybatis
 Mybatis也是对JDBC的封装，是一个半自动化的ORM框架，能自由控制SQL语句，支持动态SQL、支持存储过程，对于大型互联网应用和需要考虑查询优化的都可以采用Mybatis
 
