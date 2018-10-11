@@ -2,6 +2,10 @@
 
 ## Java基础
 
+### 为什么说Java是平台独立性语言
+
+Java是解释性语言（C++是编译性语言），保证Java具有平台独立性的机制是“中间码（字节码）”和“JVM”，它可以一次编译，处处运行，只需要在平台上安装对应的JVM，就能把“中间码（字节码）”解译成平台能执行的代码。
+
 ### 对String的理解
 
 String类是不可变类，当创建了这个类的实例后，就不允许修改它的值了，也就是说，一个对象一旦被创建出来，在其整个生命周期中，他的成员变量就不能被修改了。String s = “Hello”语句声明了一个可以指向String类型对象的引用，这个引用的名字为s，它指向了一个字符串常量“Hello”。s+=“ world”并没有改变s所指向的对象，这句代码运行后，s指向了另一个String类型的对象，该对象的内容为“Hello world”。原来的那个字符串常量“Hello”还存在于内存中，并没有被改变。
@@ -389,3 +393,24 @@ Hibernet是对JDBC的封装，是一个自动化的ORM框架（对象关系模�
 Mybatis也是对JDBC的封装，是一个半自动化的ORM框架，能自由控制SQL语句，支持动态SQL、支持存储过程，对于大型互联网应用和需要考虑查询优化的都可以采用Mybatis
 
 ## 多线程
+
+###  实现多线程有哪些方法
+（1）继承Thread类，重写run方法
+
+本质上是一个实现了Runnable接口的一个实例，通过start()方法启动线程，并执行run()方法，需要注意的是，start()方法不是立刻执行多线程代码，而是使得线程进入可运行状态，什么时候执行由操作系统决定。
+
+（2）实现Runnable接口，实现run方法
+
+自定义类实现Runnable接口，并实现run方法；创建Thread对象，用实现Runnable接口的对象作为参数实例化该Thread对象；调用Thread的start()方法启动线程。
+
+（3）实现Callable接口，实现call方法
+
+Callable可以在任务结束后提供返回值，而Runnable无法提供这个功能；Callable可以在call()中抛出异常，而Runnable的run()方法不能抛出异常。
+
+### 多线程同步的方法有哪些
+
+（1）synchronized关键字
+（2）wait()和notify()/notifyAll()
+（3）Lock接口（lock()、tryLock()、tryLock(long time,TimeUnit unit)、lockInterruptibly()）
+
+
