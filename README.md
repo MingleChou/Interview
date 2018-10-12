@@ -16,6 +16,60 @@ String类是不可变类，当创建了这个类的实例后，就不允许修�
 String是不可变类，也就是说，String对象一旦被创建，其值将不能被改变，而StringBuffer是可变类，当对象被创建后仍然可以对其值进行修改。由于String是不可变类，因此适合在需要被共享的场合中使用，而当一个字符串经常需要被修改时，最好使用StringBuffer来实现。
 StringBuilder也是可以被修改的字符串，它与StringBuffer类似，都是字符串缓冲区，但StringBuilder不是线程安全的，如果只是在单线程中使用字符串缓冲区，那么StringBuilder的效率会更高些。因此在只有单线程访问时可以使用StringBuilder，当有多个线程访问时，最好使用线程安全的StringBuffer。因为StringBuffer必要时可以对这些方法进行同步，所以任意特定实例上的所有操作就好像是以串行顺序发生的，该顺序与所涉及的每个线程进行的方法调用顺序一致。
 
+### volatile关键是什么作用？它跟synchronized方法有什么不同？
+
+volatile关键字的作用是：保证变量的可见性。 
+它被设计用来修饰被不同线程访问和修改的变量，它保证读取数据时只从主存空间读取，修改数据直接修改到主存空间中去，这样就保证了这个变量对多个操作线程的可见性了。换句话说，被volatile修饰的变量，能保证该变量的 单次读或者单次写 操作是原子的。
+
+线程安全是两方面需要的： 原子性(指的是多条操作)和可见性。volatile只能保证可见性，synchronized是两个均保证的。 
+volatile轻量级，只能修饰变量；synchronized重量级，还可修饰方法。 
+volatile不会造成线程的阻塞，而synchronized可能会造成线程的阻塞。
+
+### final, finally, finalize 的区别
+
+（1）final是关键字，它可以修饰属性、方法、类，分别表示属性不可变、方法不可覆盖、类不能被继承。
+
+（2）finally作为异常处理的一部分，只能用在try/catch语句中，并且附带一个语句块，表示这段语句最终一定被执行，通常用于释放资源。
+
+（3）finalize是Object类的方法，在垃圾回收器执行时会调用对象的finalize方法，可以覆盖此方法实现对资源的回收。
+
+### 抽象类和接口的区别
+
+接口是公开的，里面不能有私有的方法或变量，是用于让别人使用的，而抽象类是可以有私有方法或私有变量的，另外，实现接口的一定要实现接口里定义的所有方法，而实现抽象类可以有选择地重写需要用到的方法，一般的应用里，最顶级的是接口，然后是抽象类实现接口，最后才到具体类实现。还有，接口可以实现多重继承，而一个类只能继承一个超类，但可以通过继承多个接口实现多重继承。
+
+### 说说反射的用途及实现
+
+在运行时构造一个类的对象；判断一个类所具有的成员变量和方法；调用一个对象的方法；生成动态代理。反射最大的应用就是框架。
+
+spring 的 ioc/di 也是反射….
+
+javaBean和jsp之间调用也是反射….
+
+struts的 FormBean 和页面之间…也是通过反射调用….
+
+JDBC 的 classForName()也是反射…..
+
+hibernate的 find(Class clazz) 也是反射….
+
+### equals 与 == 的区别
+
+值类型（int,char,long,boolean等）都是用==判断相等性。对象引用的话，==判断引用所指的对象是否是同一个。equals是Object的成员函数，有些类会覆盖（override）这个方法，用于判断对象的等价性。例如String类，两个引用所指向的String都是”abc”，但可能出现他们实际对应的对象并不是同一个（String s="abc"和String s=new String("abc")），因此用==判断他们可能不相等，但用equals判断一定是相等的。
+
+### NIO和IO的区别
+NIO主要有三大核心部分：Channel(通道)，Buffer(缓冲区), Selector。传统IO基于字节流和字符流进行操作，而NIO基于Channel和Buffer(缓冲区)进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。Selector(选择区)用于监听多个通道的事件（比如：连接打开，数据到达）。因此，单个线程可以监听多个数据通道。
+
+1、面向流与面向缓冲
+
+Java IO和NIO之间第一个最大的区别是，IO是面向流的，NIO是面向缓冲区的。 Java IO面向流意味着每次从流中读一个或多个字节，直至读取所有字节，它们没有被缓存在任何地方。此外，它不能前后移动流中的数据。如果需要前后移动从流中读取的数据，需要先将它缓存到一个缓冲区。 Java NIO的缓冲导向方法略有不同。数据读取到一个它稍后处理的缓冲区，需要时可在缓冲区中前后移动。这就增加了处理过程中的灵活性。但是，还需要检查是否该缓冲区中包含所有您需要处理的数据。而且，需确保当更多的数据读入缓冲区时，不要覆盖缓冲区里尚未处理的数据。
+
+2、阻塞与非阻塞IO
+
+Java IO的各种流是阻塞的。这意味着，当一个线程调用read() 或 write()时，该线程被阻塞，直到有一些数据被读取，或数据完全写入，该线程在此期间不能再干任何事情了。Java NIO的非阻塞模式，使一个线程从某通道发送请求读取数据，但是它仅能得到目前可用的数据，如果目前没有数据可用时，就什么都不会获取，而不是保持线程阻塞，所以直至数据变的可以读取之前，该线程可以继续做其他的事情。 非阻塞写也是如此，一个线程请求写入一些数据到某通道，但不需要等待它完全写入，这个线程同时可以去做别的事情。 线程通常将非阻塞IO的空闲时间用于在其它通道上执行IO操作，所以一个单独的线程现在可以管理多个输入和输出通道（channel）。
+
+3、选择器（Selectors）
+
+Java NIO的选择器允许一个单独的线程来监视多个输入通道，你可以注册多个通道使用一个选择器，然后使用一个单独的线程来“选择”通道：这些通道里已经有可以处理的输入，或者选择已准备写入的通道。这种选择机制，使得一个单独的线程很容易来管理多个通道。
+
 ### 内存管理
 
 #### 01. JVM 内存划分
@@ -366,9 +420,76 @@ void quickSort(int[] array, int low, int high){
 
 ### 谈谈对Spring的特性理解（AOP、IOC、DI）
 
++ AOP：是面向切面的编程，动态封装一些可重用（与业务无关）的代码。比如说你每做一次对数据库操作，都要生成一句日志。如果，你对数据库的操作有很多类，那你每一类中都要写关于日志的方法。但是如果你用aop，那么你可以写一个方法，在这个方法中有关于数据库操作的方法，每一次调用这个方法的时候，就加上生成日志的操作。
+
+原理：通过动态代理的方式为程序添加统一功能，集中解决一些公共问题。
+
+优点：1.各个步骤之间的良好隔离性耦合性大大降低；2.源代码无关性，再扩展功能的同时不对源码进行修改操作 
+
+应用场景：Authentication 权限、Caching 缓存、Context passing 内容传递、Error handling 错误处理、Lazy loading懒加载、Debugging调试、logging, tracing, profiling and monitoring 记录跟踪优化校准、Performance optimization　性能优化、Persistence 持久化、Resource pooling　资源池、Synchronization　同步、Transactions 事务
+
++ IOC：是控制翻转或是依赖注入。通俗的讲就是如果在什么地方需要一个对象，你自己不用去通过new 生成你需要的对象，而是通过spring的bean工厂为你长生这样一个对象。
+
++ DI：依赖注入，是IOC的一种重要实现。比如对象A需要操作数据库，以前我们总是要在A中自己编写代码来获得一个Connection对象，有了 spring我们就只需要告诉spring，A中需要一个Connection，至于这个Connection怎么构造，何时构造，A不需要知道。在系统运行时，spring会在适当的时候制造一个Connection，然后像打针一样，注射到A当中，这样就完成了对各个对象之间关系的控制。A需要依赖 Connection才能正常运行，而这个Connection是由spring注入到A中的，依赖注入的名字就这么来的。
+
 ### AOP的配置方法
 
+### 什么是Spring？
+
+它是一个一站式（full-stack全栈式）框架，提供了从表现层（SpringMVC）到业务层（Spring）再到持久层（Springdata）的一套完整的解决方案。我们在项目中可以只使用Spring一个框架，它就可以提供表现层的mvc框架，持久层的Dao框架。它的两大核心IoC和AOP更是为我们程序解耦和代码简洁易维护提供了支持。
+
+### Spring优点
+1.降低了组件之间的耦合性 ，实现了软件各层之间的解耦
+2.可以使用容易提供的众多服务，如事务管理，消息服务等 
+3.容器提供单例模式支持 
+4.容器提供了AOP技术，利用它很容易实现如权限拦截，运行期监控等功能 
+5.容器提供了众多的辅助类，能加快应用的开发 
+6.spring对于主流的应用框架提供了集成支持，如hibernate，JPA，Struts等 
+7.spring属于低侵入式设计，代码的污染极低 
+8.独立于各种应用服务器 
+9.spring的DI机制降低了业务对象替换的复杂性 
+10.Spring的高度开放性，并不强制应用完全依赖于Spring，开发者可以自由选择spring 的部分或全部 
+
+### 什么是SpringMVC？
+
+Spring MVC是一个基于MVC架构的用来简化web应用程序开发的应用开发框架，它是Spring的一个模块,无需中间整合层来整合，它和Struts2一样都属于表现层的框架。在web模型中，MVC是一种很流行的框架，通过把Model，View，Controller分离，把较为复杂的web应用分成逻辑清晰的几部分，简化开发，减少出错，方便组内开发人员之间的配合。
+
+### SpringMVC优点
+
+1、它是基于组件技术的.全部的应用对象,无论控制器和视图,还是业务对象之类的都是java组件.并且和Spring提供的其他基础结构紧密集成.
+2、不依赖于Servlet API(目标虽是如此,但是在实现的时候确实是依赖于Servlet的)
+3、可以任意使用各种视图技术,而不仅仅局限于JSP
+4、支持各种请求资源的映射策略
+5、它应是易于扩展的
+
+### SpringMVC的流程
+
+（1）用户发送请求至前端控制器DispatcherServlet；
+
+（2） DispatcherServlet收到请求后，调用HandlerMapping处理器映射器，请求获取Handle；
+
+（3）处理器映射器根据请求url找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet；
+
+（4）DispatcherServlet通过HandlerAdapter处理器适配器调用处理器；
+
+（5）执行处理器(Handler，也叫后端控制器)；
+
+（6）Handler执行完成返回ModelAndView；
+
+（7）HandlerAdapter将Handler执行结果ModelAndView返回给DispatcherServlet；
+
+（8）DispatcherServlet将ModelAndView传给ViewReslover视图解析器进行解析；
+
+（9）ViewReslover解析后返回具体View；
+
+（10）DispatcherServlet对View进行渲染视图（即将模型数据填充至视图中）；
+
+（11）DispatcherServlet响应用户。
+
+![blockchain1](https://img-blog.csdn.net/20180708224853769?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2E3NDUyMzM3MDA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70 "SpringMVC流程图")
+
 ### 比较一下JDBC、Hibernet、Mybatis
+
 #### JDBC
 JDBC是一种执行SQL的Java API，是用Java语言编写的类和接口组成的，为多种关系型数据库提供了统一的访问接口。
 
@@ -376,6 +497,7 @@ JDBC是一种执行SQL的Java API，是用Java语言编写的类和接口组成�
 ①开发工作量大，需要先连接，然后处理JDBC底层事务，还需要操作Connection对象、Statement/PreparedStatement对象，ResultSet对象拿到数据，再关闭这些资源
 
 ②使用时连接、不使用就关闭，这样频繁的操作数据库，会浪费资源，降低数据库性能。
+
 #### Hibernet
 Hibernet是对JDBC的封装，是一个自动化的ORM框架（对象关系模型）它是POJO通过XML或注解的方式与数据库表映射，是全表映射的模型
 
@@ -394,6 +516,7 @@ Hibernet是对JDBC的封装，是一个自动化的ORM框架（对象关系模�
 ③自带的HQL语言性能不高，当我们查询的数据量很大时，必然需要优化SQL，而Hibernet无法做到
 
 ④学习门槛高，不容易掌握
+
 #### Mybatis
 Mybatis也是对JDBC的封装，是一个半自动化的ORM框架，能自由控制SQL语句，支持动态SQL、支持存储过程，对于大型互联网应用和需要考虑查询优化的都可以采用Mybatis
 
