@@ -37,6 +37,73 @@ volatile不会造成线程的阻塞，而synchronized可能会造成线程的阻
 
 接口是公开的，里面不能有私有的方法或变量，是用于让别人使用的，而抽象类是可以有私有方法或私有变量的，另外，实现接口的一定要实现接口里定义的所有方法，而实现抽象类可以有选择地重写需要用到的方法，一般的应用里，最顶级的是接口，然后是抽象类实现接口，最后才到具体类实现。还有，接口可以实现多重继承，而一个类只能继承一个超类，但可以通过继承多个接口实现多重继承。
 
+### HashMap的工作原理
+
+HashMap是基于hashing的原理，我们使用put(key, value)存储对象到HashMap中，使用get(key)从HashMap中获取对象。当我们给put()方法传递键和值时，我们先对键调用hashCode()方法，返回的hashCode用于找到bucket位置来储存Entry对象。”这里关键点在于指出，HashMap是在bucket中储存键对象和值对象，作为Map.Entry。这一点有助于理解获取对象的逻辑。如果你没有意识到这一点，或者错误的认为仅仅只在bucket中存储值的话，你将不会回答如何从HashMap中获取对象的逻辑。
+“如果两个键的hashcode相同，你如何获取值对象？” 面试者会回答：当我们调用get()方法，HashMap会使用键对象的hashcode找到bucket位置，找到bucket位置之后，会调用keys.equals()方法去找到链表中正确的节点
+当创建 HashMap 时，有一个默认的负载因子（load factor），其默认值为 0.75，这是时间和空间成本上一种折衷：增大负载因子可以减少 Hash 表（就是那个 Entry数组）所占用的内存空间，但会增加查询数据的时间开销，而查询是最频繁的的操作（HashMap的get()与put()方法都要用到查询）；减小负载因子会提高数据查询的性能，但会增加Hash表所占用的内存空间。
+“如果HashMap的大小超过了负载因子(load factor)定义的容量，怎么办？”除非你真正知道HashMap的工作原理，否则你将回答不出这道题。默认的负载因子大小为0.75，也就是说，当一个map填满了75%的bucket时候，和其它集合类(如ArrayList等)一样，将会创建原来HashMap大小的两倍的bucket数组，来重新调整map的大小，并将原来的对象放入新的bucket数组中。这个过程叫作rehashing，因为它调用hash方法找到新的bucket位置。
+
+JDK 1.8 以后哈希表的 添加、删除、查找、扩容方法都增加了一种 节点为 TreeNode 的情况
+添加时，当桶中链表个数超过 8 时会转换成红黑树；
+删除、扩容时，如果桶中结构为红黑树，并且树中元素个数太少的话，会进行修剪或者直接还原成链表结构；
+查找时即使哈希函数不优，大量元素集中在一个桶中，由于有红黑树结构，性能也不会差。
+
+### HashMap和Hashtable的区别
+
+HashMap和Hashtable都实现了Map接口，但决定用哪一个之前先要弄清楚它们之间的分别。主要的区别有：线程安全性，同步(synchronization)，以及速度。
+
+1、存储结构
+
+HashMap的存储规则:
+
+优先使用数组存储, 如果出现Hash冲突, 将在数组的该位置拉伸出链表进行存储(在链表的尾部进行添加), 如果链表的长度大于设定值后, 将链表转为红黑树。
+
+HashTable的存储规则:
+
+优先使用数组存储, 存储元素时, 先取出下标上的元素(可能为null), 然后添加到数组元素Entry对象的next属性中(在链表的头部进行添加)，出现Hash冲突时, 新元素next属性会指向冲突的元素，如果没有Hash冲突, 则新元素的next属性就是null。
+
+2、扩容方式
+
+HashMap：oldCap * 2
+
+HashTable：oldCap * 2 + 1
+
+3、关于null值
+
+HashMap：线程不安全；HashTable：HashTable
+
+HashMap虽然是线程不安全的, 但还是推荐使用, 因为 HashTable实现线程安全的方式太低效了, 直接在方法上加了 synchronized 关键字来实现的.
+可以使用 ConcurrentHashMap 来实现线程安全(推荐使用)，或者使用 Collections.synchronizedMap(map); 来实现线程安全(不推荐, 因为内部是使用了synchronized代码块进行控制并发的)。
+
+### 有哪些集合
+
+Collection接口下的List、Set、Queue；它们有各自的特点，Set的集合里不允许对象有重复的值，List允许有重复，它对集合中的对象进行索引，Queue的工作原理是FCFS算法(First Come, First Serve)。
+
+#### List的三个子类的特点
+
+ArrayList:
+　　底层数据结构是数组，查询快，增删慢。
+　　线程不安全，效率高。
+  
+Vector:
+　　底层数据结构是数组，查询快，增删慢。
+　　线程安全，效率低。
+Vector相对ArrayList查询慢(线程安全的)；
+Vector相对LinkedList增删慢(数组结构)
+
+LinkedList:
+　　底层数据结构是链表，查询慢，增删快。
+　　线程不安全，效率高。
+
+#### Vector和ArrayList的区别
+　　Vector是线程安全的,效率低；ArrayList是线程不安全的,效率高
+　  共同点:底层数据结构都是数组实现的,查询快,增删慢
+   
+#### ArrayList和LinkedList的区别
+　　ArrayList底层是数组结果,查询和修改快；LinkedList底层是链表结构的,增和删比较快,查询和修改比较慢
+　  共同点:都是线程不安全的.
+ 
 ### 说说反射的用途及实现
 
 在运行时构造一个类的对象；判断一个类所具有的成员变量和方法；调用一个对象的方法；生成动态代理。反射最大的应用就是框架。
@@ -416,6 +483,20 @@ void quickSort(int[] array, int low, int high){
 
 + 小表不应该建立索引
 
+### 三大范式
+
++第一范式：字段是最小的的单元不可再分。
+学生信息组成学生信息表，有年龄、性别、学号等信息组成。这些字段都不可再分，所以它是满足第一范式的
+
++第二范式：满足第一范式,表中的字段必须完全依赖于全部主键而非部分主键。
+其他字段组成的这行记录和主键表示的是同一个东西，而主键是唯一的，它们只需要依赖于主键，也就成了唯一的
+学号为1024的同学，姓名为Java3y，年龄是22岁。姓名和年龄字段都依赖着学号主键。
+
+第三范式：满足第二范式，非主键外的所有字段必须互不依赖 
+就是数据只在一个地方存储，不重复出现在多张表中，可以认为就是消除传递依赖。
+比如，我们大学分了很多系（中文系、英语系、计算机系……），这个系别管理表信息有以下字段组成：系编号，系主任，系简介，系架构。那我们能不能在学生信息表添加系编号，系主任，系简介，系架构字段呢？不行的，因为这样就冗余了，非主键外的字段形成了依赖关系(依赖到学生信息表了)！正确的做法是：学生表就只能增加一个系编号字段。
+
+
 ## 框架相关
 
 ### 谈谈对Spring的特性理解（AOP、IOC、DI）
@@ -540,5 +621,46 @@ Callable可以在任务结束后提供返回值，而Runnable无法提供这个�
 （1）synchronized关键字
 （2）wait()和notify()/notifyAll()
 （3）Lock接口（lock()、tryLock()、tryLock(long time,TimeUnit unit)、lockInterruptibly()）
+
+## Java Web
+
+### JSP的内置对象
+
+1. request  请求对象　
+
+　　类型 javax.servlet.HttpServletRequest        作用域 Request
+
+2. response  响应对象    
+
+　　类型 javax.servlet.HttpServletResponse       作用域  Page
+
+3. pageContext   页面上下文对象     
+
+　　类型 javax.servlet.jsp.PageContext      作用域    Page
+
+4. session会话对象  
+
+　　类型 javax.servlet.http.HttpSession       作用域    Session
+
+5. application  应用程序对象     
+
+　　类型 javax.servlet.ServletContext          作用域    Application
+
+6. out  输出对象                
+
+　　类型 javax.servlet.jsp.JspWriter           作用域    Page
+
+7. config  配置对象              
+
+　　类型 javax.servlet.ServletConfig          作用域    Page
+
+8. page  页面对象           
+
+　　类型 javax.lang.Object                    作用域    Page
+
+9. exception 例外对象         
+
+　　类型 javax.lang.Throwable                 作用域    page
+  
 
 
