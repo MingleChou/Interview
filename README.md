@@ -513,7 +513,9 @@ void quickSort(int[] array, int low, int high){
 
 + DI：依赖注入，是IOC的一种重要实现。比如对象A需要操作数据库，以前我们总是要在A中自己编写代码来获得一个Connection对象，有了 spring我们就只需要告诉spring，A中需要一个Connection，至于这个Connection怎么构造，何时构造，A不需要知道。在系统运行时，spring会在适当的时候制造一个Connection，然后像打针一样，注射到A当中，这样就完成了对各个对象之间关系的控制。A需要依赖 Connection才能正常运行，而这个Connection是由spring注入到A中的，依赖注入的名字就这么来的。
 
-### AOP的配置方法
+### AOP的原理：动态代理及其源码解析
+
+https://www.cnblogs.com/gonjan-blog/p/6685611.html
 
 ### 什么是Spring？
 
@@ -665,4 +667,13 @@ Callable可以在任务结束后提供返回值，而Runnable无法提供这个�
 　　类型 javax.lang.Throwable                 作用域    page
   
 
+# 计算机网络
 
+## TCP/IP协议栈包含的协议
+
+TCP/IP协议栈包含了大量的协议，主要分为四层：
+
++ 链路层：以太网协议
++ 网络层：IP协议、ARP协议（地址解析协议）、路由协议
++ 传输层：UDP、TCP
++ 应用层：HTTP、FTP、SMTP等
